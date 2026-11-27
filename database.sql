@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS productos (
     precio NUMERIC(12, 2) NOT NULL DEFAULT 0,
     precio_anterior NUMERIC(12, 2),          -- Opcional: para mostrar descuento/oferta
     imagen_url TEXT,                         -- URL directa de la imagen alojada en línea (https://...)
+    imagenes JSONB DEFAULT '[]'::jsonb,      -- Arreglo JSON de URLs de imágenes del producto
     etiquetas VARCHAR(255),                  -- Ej: "Nuevo, Algodón, Garantía 1 año"
     destacado BOOLEAN DEFAULT FALSE,         -- Para resaltar en la parte superior del catálogo
     disponible BOOLEAN DEFAULT TRUE,         -- Si está visible/disponible para los clientes

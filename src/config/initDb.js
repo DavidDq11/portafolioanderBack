@@ -191,6 +191,7 @@ async function initDb() {
       precio NUMERIC(12, 2) NOT NULL DEFAULT 0,
       precio_anterior NUMERIC(12, 2),
       imagen_url TEXT,
+      imagenes JSONB DEFAULT '[]'::jsonb,
       etiquetas VARCHAR(255),
       destacado BOOLEAN DEFAULT FALSE,
       disponible BOOLEAN DEFAULT TRUE,
@@ -198,6 +199,10 @@ async function initDb() {
       actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `);
+
+  await db.query(
+    `ALTER TABLE productos ADD COLUMN IF NOT EXISTS imagenes JSONB DEFAULT '[]'::jsonb;`
+  );
 
   await db.query(
     `CREATE INDEX IF NOT EXISTS idx_productos_categoria ON productos(categoria_id);`
@@ -257,8 +262,8 @@ async function initDb() {
       await db.query(
         `INSERT INTO productos (
           categoria_id, codigo, nombre, descripcion, precio, precio_anterior,
-          imagen_url, etiquetas, destacado, disponible
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+          imagen_url, imagenes, etiquetas, destacado, disponible
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11)`,
         [
           categoriaId,
           prod.codigo,
@@ -267,6 +272,7 @@ async function initDb() {
           prod.precio,
           prod.precio_anterior,
           prod.imagen_url,
+          JSON.stringify(prod.imagen_url ? [prod.imagen_url] : []),
           prod.etiquetas,
           prod.destacado,
           prod.disponible,
